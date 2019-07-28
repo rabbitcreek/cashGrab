@@ -46,7 +46,7 @@ if (!SD.begin(cardSelect)) {
     Serial.println("Card init. failed!");
    
   }
-  strcpy(filename, "ANALOG01.TXT");//this section sets up new files for each new reading
+  strcpy(filename, "ANALOG02.TXT");//this section sets up new files for each new reading
   /*
   for (uint8_t i = 0; i < 100; i++) {
     filename[6] = '0' + i/10;
@@ -141,7 +141,7 @@ Serial.print("VBat: " ); Serial.println(measuredvbat);
   oled.set1X();
   oled.print("T1 ");
   oled.print(temperatureF1);
-  oled.print(" C2 ");
+  oled.print(" T2 ");
   oled.println(temperatureF2);
   oled.print(now.year(), DEC);
   oled.print("/");
@@ -172,12 +172,15 @@ Serial.print("VBat: " ); Serial.println(measuredvbat);
   //logfile.print("CO2 PPM  "); logfile.print(mySensor.ppm);
       //logfile.print("  O2%");
       //logfile.print("  ");
+  if(!digitalRead(inputPin)){   
        while (1) {
     digitalWrite(DONEPIN, HIGH);
     delay(1);
     digitalWrite(DONEPIN, LOW);
     delay(1);
   }
+  }
+  
     
      
 }
