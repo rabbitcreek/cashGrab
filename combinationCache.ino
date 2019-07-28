@@ -10,6 +10,8 @@
 //#include "SSD1306Ascii.h" // https://github.com/greiman/SSD1306Ascii
 #include "SSD1306AsciiWire.h" // https://github.com/greiman/SSD1306Ascii
 #define cardSelect 4
+float temperatureF1 = 0;
+float temperatureF2 = 0;
 RTC_DS3231 rtc;
 #define I2C_ADDRESS 0x3C
  // create oled dispaly object
@@ -83,22 +85,33 @@ void loop(){
   logfile = SD.open(filename, FILE_WRITE);
    DateTime now = rtc.now();
    sensors.requestTemperatures(); 
-  float temperatureC = sensors.getTempCByIndex(0);
-  float temperatureF = sensors.getTempFByIndex(0);
+   delay(100);
+  //float temperatureC = sensors.getTempCByIndex(0);
+   temperatureF1 = sensors.getTempFByIndex(0);
+   
+  delay(100);
+   temperatureF2 = sensors.getTempFByIndex(1);
+  delay(100);
+  Serial.print("T1:  ");
+  Serial.println(temperatureF1);
+  Serial.print("T2:  ");
+  Serial.println(temperatureF2);
   float fileSize = logfile.size();
-  
+ 
+
    
 float measuredvbat = analogRead(VBATPIN);
 measuredvbat *= 2;    // we divided by 2, so multiply back
 measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
 measuredvbat /= 1024; // convert to voltage
 Serial.print("VBat: " ); Serial.println(measuredvbat);
+ 
   // log time
   //logfile.print(now.get()); // seconds since 2000
   logfile.print("T1: ");
-  logfile.print(temperatureC);
+  logfile.print(temperatureF1);
   logfile.print("  T2: ");
-  logfile.print(temperatureF);
+  logfile.print(temperatureF2);
   logfile.print("  ");
   logfile.print(now.year(), DEC);
   logfile.print("/");
@@ -117,9 +130,6 @@ Serial.print("VBat: " ); Serial.println(measuredvbat);
   logfile.flush();
   logfile.close();
 
-  
-  
-
   if(digitalRead(inputPin)){
   SSD1306AsciiWire oled;
   oled.begin(&Adafruit128x64, I2C_ADDRESS);
@@ -130,9 +140,9 @@ Serial.print("VBat: " ); Serial.println(measuredvbat);
   oled.home();
   oled.set1X();
   oled.print("T1 ");
-  oled.print(temperatureF);
+  oled.print(temperatureF1);
   oled.print(" C2 ");
-  oled.println(temperatureC);
+  oled.println(temperatureF2);
   oled.print(now.year(), DEC);
   oled.print("/");
   oled.print(now.month(), DEC);
@@ -151,18 +161,24 @@ Serial.print("VBat: " ); Serial.println(measuredvbat);
   delay(5000);
   oled.clear();
   }
-  Serial.print(temperatureC);
+  
+
+ 
+  Serial.print(temperatureF1);
   Serial.println("ºC");
-  Serial.print(temperatureF);
+  Serial.print(temperatureF2);
   Serial.println("ºF");
-  delay(5000);
+  delay(500);
   //logfile.print("CO2 PPM  "); logfile.print(mySensor.ppm);
       //logfile.print("  O2%");
       //logfile.print("  ");
+       while (1) {
     digitalWrite(DONEPIN, HIGH);
     delay(1);
     digitalWrite(DONEPIN, LOW);
     delay(1);
+  }
+    
      
 }
 
